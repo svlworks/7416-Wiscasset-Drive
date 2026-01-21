@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7416 Wiscasset Dr | The Experience</title>
+    <style>
+        /* --- BRANDING & RESET --- */
+        :root {
+            --gold: #d4af37;
+            --dark: #0f0f0f;
+            --text-light: #f4f4f4;
+            --card-bg: rgba(15, 15, 15, 0.85);
+        }
+        
+        * { box-sizing: border-box; }
+
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Montserrat', sans-serif; 
+            scroll-behavior: smooth; 
+            color: var(--dark); 
+            overflow-x: hidden; 
+            background-color: var(--dark);
+        }
+
+        h1, h2, h3 { font-family: 'Playfair Display', serif; margin: 0; font-weight: 400; }
+        p { line-height: 1.8; font-size: 1.1rem; font-weight: 300; }
+        
+        /* --- SCROLL ANIMATIONS --- */
+        .hidden { opacity: 0; transform: translateY(40px); transition: all 1.2s ease-out; }
+        .visible { opacity: 1; transform: translateY(0); }
+
+        /* --- BUTTONS --- */
+        .btn { 
+            display: inline-block; 
+            padding: 15px 40px; 
+            background: transparent; 
+            color: #fff; 
+            text-decoration: none; 
+            text-transform: uppercase; 
+            letter-spacing: 3px; 
+            font-size: 0.8rem; 
+            border: 1px solid rgba(255,255,255,0.6); 
+            transition: 0.4s; 
+            cursor: pointer; 
+            margin-top: 20px; 
+        }
+        .btn:hover { background: #fff; color: #000; border-color: #fff; }
+        .btn-gold { border-color: var(--gold); color: var(--gold); }
+        .btn-gold:hover { background: var(--gold); color: #fff; }
+
+        /* --- SECTIONS --- */
+        section { 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+            overflow: hidden; 
+            perspective: 1000px; /* Essential for 3D effect on children */
+        }
+        
+        /* --- INTERACTIVE BACKGROUND LAYERS --- */
+        .interactive-bg {
+            position: absolute;
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
+            background-position: center;
+            background-size: cover;
+            z-index: 0;
+            transition: transform 0.1s ease-out; /* Smooth movement */
+            will-change: transform;
+        }
+
+        /* DARK OVERLAY (Readability) */
+        section::before {
+            content: ''; 
+            position: absolute; 
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5));
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* --- BACKGROUND IMAGES --- */
+        .img-hero { background-image: url('https://photos.zillowstatic.com/fp/b324e36083ddf00d42c3382741d7616f-cc_ft_960.webp'); }
+        .img-living { background-image: url('https://photos.zillowstatic.com/fp/81a0daee3390e9aa2be246b90086f291-uncropped_scaled_within_1536_1152.webp'); }
+        .img-office { background-image: url('https://photos.zillowstatic.com/fp/1b2d510842059401e5bb430e871c2e68-uncropped_scaled_within_1536_1152.webp'); }
+        .img-master { background-image: url('https://photos.zillowstatic.com/fp/cffd078f3f71731042a44e11ff32c6d7-uncropped_scaled_within_1536_1152.webp'); }
+        .img-balcony { background-image: url('https://photos.zillowstatic.com/fp/a0ed6a8ef52b96661efdff0e17f57a64-uncropped_scaled_within_1536_1152.webp'); }
+        .img-pool { background-image: url('https://photos.zillowstatic.com/fp/bf473df56f79a260cdb1faf5e5aa258d-uncropped_scaled_within_1536_1152.webp'); }
+
+        /* HERO CONTENT */
+        .hero-content { 
+            position: relative; 
+            z-index: 2; 
+            max-width: 900px; 
+            padding: 20px; 
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .hero h1 { font-size: 4.5rem; letter-spacing: -1px; margin-bottom: 20px; }
+        .hero p { font-size: 1.4rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 50px; opacity: 0.9; }
+
+        /* NARRATIVE SECTION */
+        .narrative { background: #fff; padding: 120px 20px; text-align: center; z-index: 2; position: relative;}
+        .narrative-box { max-width: 700px; margin: 0 auto; }
+        .narrative h2 { font-size: 3rem; margin-bottom: 30px; color: var(--dark); }
+        .narrative p { color: #555; font-size: 1.25rem; }
+
+        /* --- TRIGGER BUTTON --- */
+        .trigger-btn {
+            position: absolute;
+            z-index: 20; 
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); 
+            
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            color: #fff;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+            font-size: 2rem;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+        .trigger-btn:hover {
+            background: var(--gold);
+            border-color: var(--gold);
+            transform: translate(-50%, -50%) scale(1.1); 
+        }
+        .trigger-btn::after { content: '+'; font-family: 'Montserrat', sans-serif; font-weight: 200; }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+        .trigger-btn { animation: pulse 2s infinite; }
+
+        /* --- OVERLAY CARD --- */
+        .card-container {
+            position: relative;
+            z-index: 10;
+            pointer-events: none; 
+        }
+
+        .overlay-card { 
+            background: var(--card-bg); 
+            color: #fff;
+            padding: 60px 50px; 
+            max-width: 500px; 
+            margin-left: 10%; 
+            backdrop-filter: blur(15px);
+            border-left: 4px solid var(--gold); 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            
+            /* Hidden State */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            pointer-events: none;
+        }
+
+        /* Active State */
+        .overlay-card.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto; 
+        }
+
+        .overlay-card.right { 
+            margin-left: auto; 
+            margin-right: 10%; 
+            border-left: none; 
+            border-right: 4px solid var(--gold); 
+            text-align: right; 
+        }
+        
+        .overlay-card h3 { font-size: 2.2rem; margin-bottom: 15px; color: var(--gold); }
+        .overlay-card p { opacity: 0.9; font-size: 1.1rem; }
+
+        .close-card {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: transparent; border: none;
+            color: rgba(255,255,255,0.5);
+            font-size: 1.5rem; cursor: pointer;
+            transition: 0.3s; line-height: 1;
+        }
+        .close-card:hover { color: var(--gold); transform: rotate(90deg); }
+
+        /* --- VIDEO SECTION STYLES --- */
+        .video-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 337px; 
+            height: 599px;
+            max-width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            border: 2px solid var(--gold);
+            background: #000;
+        }
+        .video-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .video-section {
+            background: #111;
+            flex-direction: column; /* Stack on mobile, side-by-side on desktop */
+            text-align: center;
+        }
+        .video-fallback {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .video-fallback a {
+            color: var(--gold);
+            text-decoration: underline;
+        }
+
+        /* DETAILS GRID */
+        .details { background: var(--dark); color: #fff; padding: 120px 20px; text-align: center; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 50px; 
+            max-width: 1000px; 
+            margin: 60px auto; 
+        }
+        .stat h3 { font-size: 3.5rem; color: var(--gold); margin-bottom: 10px; }
+        .stat p { text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem; opacity: 0.6; }
+
+        /* FOOTER */
+        footer { background: #000; color: #fff; padding: 100px 20px; text-align: center; border-top: 1px solid #222; }
+        .footer-logo { 
+            font-family: 'Playfair Display'; font-size: 1.5rem; letter-spacing: 2px; 
+            margin-bottom: 40px; display: inline-block; border-bottom: 1px solid var(--gold); padding-bottom: 10px;
+        }
+
+        /* NAV DOTS */
+        .nav-dots {
+            position: fixed; top: 50%; right: 20px; transform: translateY(-50%); z-index: 100;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        .dot {
+            width: 10px; height: 10px; background: rgba(255,255,255,0.3); border-radius: 50%; cursor: pointer; transition: 0.3s;
+        }
+        .dot:hover, .dot.active { background: var(--gold); transform: scale(1.3); }
+        
+        @media (min-width: 769px) {
+            .video-section {
+                flex-direction: row; /* Side by side on desktop */
+            }
+        }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.8rem; }
+            .narrative { padding: 60px 20px; }
+            .overlay-card, .overlay-card.right { 
+                margin: 20px; width: calc(100% - 40px); max-width: 100%; padding: 40px 30px; 
+            }
+            .interactive-bg { width: 100%; height: 100%; top: 0; left: 0; }
+            .nav-dots { display: none; }
+            /* Mobile adjustment for video */
+            .video-wrapper { 
+                width: 100%; 
+                max-width: 337px; 
+                height: auto; 
+                aspect-ratio: 337/599; 
+                border-radius: 10px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- NAV -->
+    <div class="nav-dots">
+        <div class="dot" onclick="document.querySelector('.hero-section').scrollIntoView()"></div>
+        <div class="dot" onclick="document.querySelector('#intro').scrollIntoView()"></div>
+        <div class="dot" onclick="document.querySelector('.section-living').scrollIntoView()"></div>
+        <div class="dot" onclick="document.querySelector('.section-office').scrollIntoView()"></div>
+        <div class="dot" onclick="document.querySelector('.section-master').scrollIntoView()"></div>
+        <div class="dot" onclick="document.querySelector('.section-pool').scrollIntoView()"></div>
+        <div class="dot" onclick="document.querySelector('.section-video').scrollIntoView()"></div>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero-section">
+        <div class="interactive-bg img-hero"></div>
+        <div class="hero-content hidden">
+            <p>West Hills | Stonegate</p>
+            <h1>The Elevated Sanctuary</h1>
+            <a href="#intro" class="btn">Enter The Experience</a>
+        </div>
+    </section>
+
+    <!-- INTRO -->
+    <section id="intro" class="narrative">
+        <div class="narrative-box hidden">
+            <h2>Luxury is a Feeling</h2>
+            <p>Set behind the gates of the Stonegate community. 2 acres of silence. No HOA. Just you, the view, and the space to breathe. This isn't just a home; it's where you recharge for what's next.</p>
+        </div>
+    </section>
+
+    <!-- LIVING -->
+    <section class="section-living">
+        <div class="interactive-bg img-living"></div>
+        <div class="trigger-btn hidden" onclick="toggleCard(this)"></div>
+        <div class="card-container">
+            <div class="overlay-card">
+                <button class="close-card" onclick="closeCard(this)">✕</button>
+                <h3>Designed for Connection</h3>
+                <p>Whether you’re hosting the team or enjoying a quiet evening, the open floor plan bridges effortless elegance with everyday comfort.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- OFFICE -->
+    <section class="section-office">
+        <div class="interactive-bg img-office"></div>
+        <div class="trigger-btn hidden" onclick="toggleCard(this)"></div>
+        <div class="card-container" style="width: 100%; display:flex; justify-content: flex-end;">
+            <div class="overlay-card right">
+                <button class="close-card" onclick="closeCard(this)">✕</button>
+                <h3>Uninterrupted Focus</h3>
+                <p>In a world of noise, your workspace matters. A dedicated office with views that inspire, offering the privacy you need to build your legacy.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MASTER -->
+    <section class="section-master">
+        <div class="interactive-bg img-master"></div>
+        <div class="trigger-btn hidden" onclick="toggleCard(this)"></div>
+        <div class="card-container">
+            <div class="overlay-card">
+                <button class="close-card" onclick="closeCard(this)">✕</button>
+                <h3>The Recharge</h3>
+                <p>Performance requires recovery. Your primary suite is a retreat within a retreat. Fireplace on. Balcony doors open. This is where the day ends.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BALCONY -->
+    <section class="section-balcony">
+        <div class="interactive-bg img-balcony"></div>
+        <div class="trigger-btn hidden" onclick="toggleCard(this)"></div>
+        <div class="card-container" style="width: 100%; display:flex; justify-content: flex-end;">
+            <div class="overlay-card right">
+                <button class="close-card" onclick="closeCard(this)">✕</button>
+                <h3>Perspective</h3>
+                <p>Jetliner views of the city lights. From the San Gabriel to the Santa Monica Mountains. The world moves fast below, but up here? It stands still.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- POOL -->
+    <section class="section-pool">
+        <div class="interactive-bg img-pool"></div>
+        <div class="trigger-btn hidden" onclick="toggleCard(this)"></div>
+        <div class="card-container">
+            <div class="overlay-card">
+                <button class="close-card" onclick="closeCard(this)">✕</button>
+                <h3>Your Private Resort</h3>
+                <p>Why book a vacation when you live in one? A custom pool, mesmerizing waterfalls, and a spa that rivals 5-star hotels.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- VIDEO TOUR SECTION -->
+    <section class="video-section section-video">
+        <div class="hero-content hidden" style="margin: 0 50px;">
+            <h3>The Full Tour</h3>
+            <p>Experience the property in motion.</p>
+        </div>
+        <div class="hidden" style="display: flex; flex-direction: column; align-items: center;">
+            <div class="video-wrapper">
+                <!-- REMOVED referrerpolicy to fix local file errors -->
+                <iframe width="337" height="599" src="https://www.youtube.com/embed/RfhooyobqcA?autoplay=1&mute=1&loop=1&playlist=RfhooyobqcA" title="7416 Wiscasset Drive" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <!-- Fallback Link -->
+            <div class="video-fallback">
+                Video not playing? <a href="https://www.youtube.com/shorts/RfhooyobqcA" target="_blank">Watch on YouTube</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- DETAILS -->
+    <section class="details">
+        <div class="hidden">
+            <h2>The Details</h2>
+            <div class="grid">
+                <div class="stat"><h3>4,205</h3><p>Sq Ft Living</p></div>
+                <div class="stat"><h3>2</h3><p>Acres Lot</p></div>
+                <div class="stat"><h3>5</h3><p>Bedrooms</p></div>
+                <div class="stat"><h3>54</h3><p>Solar Panels</p></div>
+            </div>
+            <p style="margin-top:50px; opacity: 0.5;">*Move-in Ready | ADU Potential | 3-Car Garage</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="hidden">
+            <div class="footer-logo">GLOBL RED</div>
+            <h2>Make It Yours.</h2>
+            <p style="margin-bottom: 40px; margin-top: 20px;">You’ve seen the photos. Now, come feel the energy.</p>
+            <a href="mailto:contact@kofinartey.com" class="btn btn-gold">Schedule Private Tour</a>
+            <br><br><br>
+            <p style="font-size: 0.7rem; opacity: 0.4;">© 2026 Kofi Nartey | Globl RED. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- 1. SCROLL VISIBILITY OBSERVER ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.hidden').forEach((el) => observer.observe(el));
+
+
+        // --- 2. CARD TOGGLE LOGIC ---
+        function toggleCard(btn) {
+            const section = btn.parentElement;
+            const card = section.querySelector('.overlay-card');
+            btn.style.opacity = '0';
+            btn.style.pointerEvents = 'none';
+            card.classList.add('active');
+        }
+
+        function closeCard(btn) {
+            const card = btn.closest('.overlay-card');
+            const section = card.closest('section');
+            const trigger = section.querySelector('.trigger-btn');
+            card.classList.remove('active');
+            trigger.style.opacity = '1';
+            trigger.style.pointerEvents = 'auto';
+        }
+
+
+        // --- 3. BACKGROUND IMAGE TILT LOGIC ---
+        const bgImages = document.querySelectorAll('.interactive-bg');
+
+        document.addEventListener('mousemove', (e) => {
+            if (window.innerWidth < 768) return; // Disable on mobile
+
+            const x = (e.clientX - window.innerWidth / 2) / 40; 
+            const y = (e.clientY - window.innerHeight / 2) / 40;
+
+            bgImages.forEach(bg => {
+                const rect = bg.parentElement.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    bg.style.transform = `scale(1.1) translateX(${-x}px) translateY(${-y}px) rotateY(${x/2}deg) rotateX(${-y/2}deg)`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
