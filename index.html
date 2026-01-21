@@ -92,6 +92,10 @@
         /* Updated: Removed 'images/' prefix. Upload .jpg files to the main folder! */
         .img-hero { background-image: url('hero.jpg'); }
         .img-living { background-image: url('living.jpg'); }
+        /* NEW IMAGES */
+        .img-kitchen { background-image: url('kitchen.jpg'); }
+        .img-nook { background-image: url('nook.jpg'); }
+        /* END NEW IMAGES */
         .img-office { background-image: url('office.jpg'); }
         .img-master { background-image: url('master.jpg'); }
         .img-balcony { background-image: url('balcony.jpg'); }
@@ -301,6 +305,9 @@
         <div class="dot" onclick="document.querySelector('.hero-section').scrollIntoView()"></div>
         <div class="dot" onclick="document.querySelector('#intro').scrollIntoView()"></div>
         <div class="dot" onclick="document.querySelector('.section-living').scrollIntoView()"></div>
+        <!-- New Dots for Kitchen & Nook -->
+        <div class="dot" onclick="document.querySelector('.section-kitchen').scrollIntoView()"></div>
+        <div class="dot" onclick="document.querySelector('.section-nook').scrollIntoView()"></div>
         <div class="dot" onclick="document.querySelector('.section-office').scrollIntoView()"></div>
         <div class="dot" onclick="document.querySelector('.section-master').scrollIntoView()"></div>
         <div class="dot" onclick="document.querySelector('.section-pool').scrollIntoView()"></div>
@@ -338,6 +345,32 @@
         </div>
     </section>
 
+    <!-- KITCHEN (NEW) -->
+    <section class="section-kitchen">
+        <div class="interactive-bg img-kitchen"></div>
+        <div class="trigger-btn hidden" onclick="toggleCard(this)"></div>
+        <div class="card-container" style="width: 100%; display:flex; justify-content: flex-end;">
+            <div class="overlay-card right">
+                <button class="close-card" onclick="closeCard(this)">✕</button>
+                <h3>The Culinary Stage</h3>
+                <p>A gourmet center island ready for your private chef or Sunday morning pancakes. Stainless steel appliances, custom cabinetry, and a layout that turns cooking into a performance.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- NOOK (NEW) -->
+    <section class="section-nook">
+        <div class="interactive-bg img-nook"></div>
+        <div class="trigger-btn hidden" onclick="toggleCard(this)"></div>
+        <div class="card-container">
+            <div class="overlay-card">
+                <button class="close-card" onclick="closeCard(this)">✕</button>
+                <h3>Morning Rituals</h3>
+                <p>Framed by panoramic views and bathed in natural light, this breakfast nook is your front-row seat to the sunrise. A serene, sun-drenched corner designed for slow mornings and fresh starts.</p>
+            </div>
+        </div>
+    </section>
+
     <!-- OFFICE -->
     <section class="section-office">
         <div class="interactive-bg img-office"></div>
@@ -359,7 +392,7 @@
             <div class="overlay-card">
                 <button class="close-card" onclick="closeCard(this)">✕</button>
                 <h3>The Recharge</h3>
-                <p>Performance requires recovery. Your primary suite is a retreat within a retreat. Mountains by day, City lights by night. This is where the day starts and ends.</p>
+                <p>Performance requires recovery. Your primary suite is a retreat within a retreat. Mountains by day, city lights by night. This is where the day starts and ends.</p>
             </div>
         </div>
     </section>
@@ -427,7 +460,7 @@
             <div class="footer-logo">GLOBL RED</div>
             <h2>Make It Yours.</h2>
             <p style="margin-bottom: 40px; margin-top: 20px;">You’ve seen the photos. Now, come feel the energy.</p>
-            <a href="mailto:kofi@globlconsulting.com" class="btn btn-gold">Schedule Private Tour</a>
+            <a href="mailto:contact@kofinartey.com" class="btn btn-gold">Schedule Private Tour</a>
             <br><br><br>
             <p style="font-size: 0.7rem; opacity: 0.4;">© 2026 Kofi Nartey | Globl RED. All Rights Reserved.</p>
         </div>
@@ -483,8 +516,4 @@
         });
     </script>
 </body>
-
 </html>
-
-
-
