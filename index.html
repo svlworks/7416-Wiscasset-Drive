@@ -10,7 +10,7 @@
             --gold: #d4af37;
             --dark: #0f0f0f;
             --text-light: #f4f4f4;
-            --card-bg: rgba(15, 15, 15, 0.85);
+            --card-bg: rgba(15, 15, 15, 0.9);
         }
         
         * { box-sizing: border-box; }
@@ -19,467 +19,349 @@
             margin: 0; 
             padding: 0; 
             font-family: 'Montserrat', sans-serif; 
-            scroll-behavior: smooth; 
             color: var(--dark); 
-            overflow-x: hidden; 
-            background-color: var(--dark);
+            background-color: #000; 
+            overflow: hidden; /* No scrolling */
+            width: 100vw;
+            height: 100vh;
         }
 
         h1, h2, h3 { font-family: 'Playfair Display', serif; margin: 0; font-weight: 400; }
         p { line-height: 1.8; font-size: 1.1rem; font-weight: 300; }
-        
-        /* --- SCROLL ANIMATIONS --- */
-        .hidden { opacity: 0; transform: translateY(40px); transition: all 1.2s ease-out; }
-        .visible { opacity: 1; transform: translateY(0); }
 
-        /* --- BUTTONS --- */
-        .btn { 
-            display: inline-block; 
-            padding: 15px 40px; 
-            background: transparent; 
-            color: #fff; 
-            text-decoration: none; 
-            text-transform: uppercase; 
-            letter-spacing: 3px; 
-            font-size: 0.8rem; 
-            border: 1px solid rgba(255,255,255,0.6); 
-            transition: 0.4s; 
-            cursor: pointer; 
-            margin-top: 20px; 
+        /* --- BOOK STAGE --- */
+        #book-stage {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            perspective: 2500px;
+            overflow: hidden;
+            background: #000;
         }
-        .btn:hover { background: #fff; color: #000; border-color: #fff; }
-        .btn-gold { border-color: var(--gold); color: var(--gold); }
-        .btn-gold:hover { background: var(--gold); color: #fff; }
 
-        /* --- SECTIONS --- */
+        /* --- PAGES --- */
         section { 
-            min-height: 100vh; 
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            position: relative; 
-            overflow: hidden; 
-            perspective: 1000px; /* Essential for 3D effect on children */
+            
+            /* Book Turning Logic */
+            transform-style: preserve-3d;
+            transform-origin: left center;
+            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.5s ease 0.4s;
+            
+            background-color: #000; /* Black background to hide any gaps */
+            box-shadow: -10px 0 40px rgba(0,0,0,0.7);
         }
         
-        /* --- INTERACTIVE BACKGROUND LAYERS --- */
-        .interactive-bg {
-            position: absolute;
-            top: -5%;
-            left: -5%;
-            width: 110%;
-            height: 110%;
-            background-position: center;
-            background-size: cover;
-            z-index: 0;
-            transition: transform 0.1s ease-out; /* Smooth movement */
-            will-change: transform;
-            /* Added to improve rendering quality */
-            image-rendering: -webkit-optimize-contrast;
-        }
-
-        /* DARK OVERLAY (Readability) */
-        section::before {
-            content: ''; 
-            position: absolute; 
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5));
-            z-index: 1;
+        /* The "Turned" Page Class */
+        section.turned {
+            transform: rotateY(-110deg);
+            opacity: 0;
             pointer-events: none;
         }
 
-        /* --- BACKGROUND IMAGES (ROOT FOLDER) --- */
-        /* Updated: Removed 'images/' prefix. Upload .jpg files to the main folder! */
+        /* --- BACKGROUND IMAGES --- */
+        .interactive-bg {
+            position: absolute;
+            top: -5%; left: -5%;
+            width: 110%; height: 110%; /* Slight zoom for movement */
+            background-position: center;
+            background-size: cover;
+            z-index: 0;
+            
+            /* UPDATED: Slower transition for "Breathe" effect */
+            transition: transform 2s cubic-bezier(0.22, 1, 0.36, 1); 
+            will-change: transform;
+        }
+
+        /* Image Sources (Local Files) */
         .img-hero { background-image: url('hero.jpg'); }
         .img-living { background-image: url('living.jpg'); }
-        /* NEW IMAGES */
         .img-kitchen { background-image: url('kitchen.jpg'); }
         .img-nook { background-image: url('nook.jpg'); }
-        /* END NEW IMAGES */
         .img-office { background-image: url('office.jpg'); }
         .img-master { background-image: url('master.jpg'); }
         .img-balcony { background-image: url('balcony.jpg'); }
         .img-pool { background-image: url('pool.jpg'); }
 
-        /* HERO CONTENT */
+        /* --- CONTENT & TEXT --- */
         .hero-content { 
-            position: relative; 
-            z-index: 2; 
-            max-width: 900px; 
-            padding: 20px; 
-            text-align: center;
-            color: #fff;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            position: relative; z-index: 2; 
+            max-width: 900px; padding: 20px; 
+            text-align: center; color: #fff;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.9);
         }
         .hero h1 { font-size: 4.5rem; letter-spacing: -1px; margin-bottom: 20px; }
         .hero p { font-size: 1.4rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 50px; opacity: 0.9; }
 
-        /* NARRATIVE SECTION */
-        .narrative { background: #fff; padding: 120px 20px; text-align: center; z-index: 2; position: relative;}
-        .narrative-box { max-width: 700px; margin: 0 auto; }
-        .narrative h2 { font-size: 3rem; margin-bottom: 30px; color: var(--dark); }
-        .narrative p { color: #555; font-size: 1.25rem; }
+        .narrative { background: #fff; color: var(--dark); z-index: 19; }
+        .narrative-box { max-width: 700px; margin: 0 auto; text-align: center; }
+        .narrative h2 { font-size: 3rem; margin-bottom: 30px; }
 
-        /* --- TRIGGER BUTTON --- */
+        /* --- UI ELEMENTS --- */
+        .btn { 
+            display: inline-block; padding: 15px 40px; background: transparent; color: #fff; 
+            text-decoration: none; text-transform: uppercase; letter-spacing: 3px; font-size: 0.8rem; 
+            border: 1px solid rgba(255,255,255,0.6); transition: 0.4s; cursor: pointer; margin-top: 20px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .btn:hover { background: #fff; color: #000; border-color: #fff; text-shadow: none; }
+
+        /* Trigger Button (+) */
         .trigger-btn {
-            position: absolute;
-            z-index: 20; 
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); 
-            
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            color: #fff;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(4px);
-            font-size: 2rem;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            position: absolute; z-index: 10; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.6); color: #fff; 
+            width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(4px); font-size: 2rem; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.3); animation: pulse 2s infinite;
         }
-        .trigger-btn:hover {
-            background: var(--gold);
-            border-color: var(--gold);
-            transform: translate(-50%, -50%) scale(1.1); 
-        }
+        .trigger-btn:hover { background: var(--gold); border-color: var(--gold); transform: translate(-50%, -50%) scale(1.1); }
         .trigger-btn::after { content: '+'; font-family: 'Montserrat', sans-serif; font-weight: 200; }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
-            70% { box-shadow: 0 0 0 20px rgba(212, 175, 55, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
-        }
-        .trigger-btn { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(212, 175, 55, 0); } 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); } }
 
-        /* --- OVERLAY CARD --- */
-        .card-container {
-            position: relative;
-            z-index: 10;
-            pointer-events: none; 
-        }
-
+        /* Pop-up Cards */
+        .card-container { position: relative; z-index: 10; pointer-events: none; width: 100%; height: 100%; display: flex; align-items: center; }
         .overlay-card { 
-            background: var(--card-bg); 
-            color: #fff;
-            padding: 60px 50px; 
-            max-width: 500px; 
-            margin-left: 10%; 
-            backdrop-filter: blur(15px);
-            border-left: 4px solid var(--gold); 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            
-            /* Hidden State */
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(20px);
-            transition: all 0.5s ease;
-            pointer-events: none;
+            background: var(--card-bg); color: #fff; padding: 60px 50px; max-width: 500px; margin-left: 10%; 
+            backdrop-filter: blur(15px); border-left: 4px solid var(--gold); box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            opacity: 0; visibility: hidden; transform: translateY(20px); transition: all 0.5s ease; pointer-events: none;
         }
-
-        /* Active State */
-        .overlay-card.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-            pointer-events: auto; 
-        }
-
-        .overlay-card.right { 
-            margin-left: auto; 
-            margin-right: 10%; 
-            border-left: none; 
-            border-right: 4px solid var(--gold); 
-            text-align: right; 
-        }
-        
+        .overlay-card.active { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
+        .overlay-card.right { margin-left: auto; margin-right: 10%; border-left: none; border-right: 4px solid var(--gold); text-align: right; }
         .overlay-card h3 { font-size: 2.2rem; margin-bottom: 15px; color: var(--gold); }
-        .overlay-card p { opacity: 0.9; font-size: 1.1rem; }
+        .close-card { position: absolute; top: 20px; right: 20px; background: transparent; border: none; color: rgba(255,255,255,0.5); font-size: 1.5rem; cursor: pointer; }
+        .close-card:hover { color: var(--gold); }
 
-        .close-card {
-            position: absolute;
-            top: 20px; right: 20px;
-            background: transparent; border: none;
-            color: rgba(255,255,255,0.5);
-            font-size: 1.5rem; cursor: pointer;
-            transition: 0.3s; line-height: 1;
+        /* Navigation Controls (Bottom) */
+        .book-controls {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 100;
+            display: flex; align-items: center; gap: 30px;
+            background: rgba(0,0,0,0.7); padding: 10px 30px; border-radius: 50px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
         }
-        .close-card:hover { color: var(--gold); transform: rotate(90deg); }
+        .nav-btn { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; transition: 0.3s; opacity: 0.7; }
+        .nav-btn:hover { opacity: 1; color: var(--gold); }
+        .nav-btn:disabled { opacity: 0.2; cursor: default; }
+        .page-indicator { font-size: 0.9rem; letter-spacing: 2px; color: #fff; font-weight: 300; }
 
-        /* --- VIDEO SECTION STYLES --- */
-        .video-wrapper {
-            position: relative;
-            z-index: 2;
-            width: 337px; 
-            height: 599px;
-            max-width: 100%;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            border: 2px solid var(--gold);
-            background: #000;
+        /* Video Section */
+        .video-section { background: #111; flex-direction: column; text-align: center; }
+        .video-wrapper { 
+            position: relative; z-index: 2; width: 337px; height: 599px; max-width: 100%; 
+            border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.8); border: 2px solid var(--gold); background: #000; 
         }
-        .video-wrapper iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        .video-section {
-            background: #111;
-            flex-direction: column; /* Stack on mobile, side-by-side on desktop */
-            text-align: center;
-        }
-        .video-fallback {
-            margin-top: 20px;
-            font-size: 0.8rem;
-            color: #888;
-        }
-        .video-fallback a {
-            color: var(--gold);
-            text-decoration: underline;
-        }
+        .video-wrapper iframe { width: 100%; height: 100%; border: none; }
+        .video-fallback { margin-top: 20px; font-size: 0.8rem; color: #888; }
+        .video-fallback a { color: var(--gold); text-decoration: underline; }
 
-        /* DETAILS GRID */
-        .details { background: var(--dark); color: #fff; padding: 120px 20px; text-align: center; }
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 50px; 
-            max-width: 1000px; 
-            margin: 60px auto; 
-        }
+        /* Details & Footer */
+        .details { background: var(--dark); color: #fff; text-align: center; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 50px; max-width: 1000px; margin: 60px auto; }
         .stat h3 { font-size: 3.5rem; color: var(--gold); margin-bottom: 10px; }
         .stat p { text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem; opacity: 0.6; }
-
-        /* FOOTER */
         footer { background: #000; color: #fff; padding: 100px 20px; text-align: center; border-top: 1px solid #222; }
-        .footer-logo { 
-            font-family: 'Playfair Display'; font-size: 1.5rem; letter-spacing: 2px; 
-            margin-bottom: 40px; display: inline-block; border-bottom: 1px solid var(--gold); padding-bottom: 10px;
-        }
+        .footer-logo { font-family: 'Playfair Display'; font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 40px; display: inline-block; border-bottom: 1px solid var(--gold); padding-bottom: 10px; }
 
-        /* NAV DOTS */
-        .nav-dots {
-            position: fixed; top: 50%; right: 20px; transform: translateY(-50%); z-index: 100;
-            display: flex; flex-direction: column; gap: 15px;
-        }
-        .dot {
-            width: 10px; height: 10px; background: rgba(255,255,255,0.3); border-radius: 50%; cursor: pointer; transition: 0.3s;
-        }
-        .dot:hover, .dot.active { background: var(--gold); transform: scale(1.3); }
-        
-        @media (min-width: 769px) {
-            .video-section {
-                flex-direction: row; /* Side by side on desktop */
-            }
-        }
+        /* Mobile */
         @media (max-width: 768px) {
             .hero h1 { font-size: 2.8rem; }
             .narrative { padding: 60px 20px; }
-            .overlay-card, .overlay-card.right { 
-                margin: 20px; width: calc(100% - 40px); max-width: 100%; padding: 40px 30px; 
-            }
-            .interactive-bg { width: 100%; height: 100%; top: 0; left: 0; }
-            .nav-dots { display: none; }
-            /* Mobile adjustment for video */
-            .video-wrapper { 
-                width: 100%; 
-                max-width: 337px; 
-                height: auto; 
-                aspect-ratio: 337/599; 
-                border-radius: 10px;
-            }
+            .overlay-card, .overlay-card.right { margin: 20px; width: calc(100% - 40px); max-width: 100%; padding: 40px 30px; }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- NAV -->
-    <div class="nav-dots">
-        <div class="dot" onclick="document.querySelector('.hero-section').scrollIntoView()"></div>
-        <div class="dot" onclick="document.querySelector('#intro').scrollIntoView()"></div>
-        <div class="dot" onclick="document.querySelector('.section-living').scrollIntoView()"></div>
-        <!-- New Dots for Kitchen & Nook -->
-        <div class="dot" onclick="document.querySelector('.section-kitchen').scrollIntoView()"></div>
-        <div class="dot" onclick="document.querySelector('.section-nook').scrollIntoView()"></div>
-        <div class="dot" onclick="document.querySelector('.section-office').scrollIntoView()"></div>
-        <div class="dot" onclick="document.querySelector('.section-master').scrollIntoView()"></div>
-        <div class="dot" onclick="document.querySelector('.section-pool').scrollIntoView()"></div>
-        <div class="dot" onclick="document.querySelector('.section-video').scrollIntoView()"></div>
-    </div>
+    <div id="book-stage">
 
-    <!-- HERO -->
-    <section class="hero-section">
-        <div class="interactive-bg img-hero"></div>
-        <div class="hero-content hidden">
-            <p>West Hills | Stonegate</p>
-            <h1>The Elevated Sanctuary</h1>
-            <a href="#intro" class="btn">Enter The Experience</a>
-        </div>
-    </section>
-
-    <!-- INTRO -->
-    <section id="intro" class="narrative">
-        <div class="narrative-box hidden">
-            <h2>Luxury is a Feeling</h2>
-            <p>Set behind the gates of the Stonegate community. 2 acres of silence. No HOA. Just you, the view, and the space to breathe. This isn't just a home; it's where you recharge for what's next.</p>
-        </div>
-    </section>
-
-    <!-- LIVING -->
-    <section class="section-living">
-        <div class="interactive-bg img-living"></div>
-        <div class="trigger-btn hidden" onclick="toggleCard(this)"></div>
-        <div class="card-container">
-            <div class="overlay-card">
-                <button class="close-card" onclick="closeCard(this)">✕</button>
-                <h3>Designed for Connection</h3>
-                <p>Whether you’re hosting the team or enjoying a quiet evening, the open floor plan bridges effortless elegance with everyday comfort.</p>
+        <!-- 1. HERO -->
+        <section class="hero-section" id="page-1" style="z-index: 20;">
+            <div class="interactive-bg img-hero"></div>
+            <div class="hero-content">
+                <p>West Hills | Stonegate</p>
+                <h1>The Elevated Sanctuary</h1>
+                <button class="btn" onclick="nextPage()">Begin Tour</button>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- KITCHEN (NEW) -->
-    <section class="section-kitchen">
-        <div class="interactive-bg img-kitchen"></div>
-        <div class="trigger-btn hidden" onclick="toggleCard(this)"></div>
-        <div class="card-container" style="width: 100%; display:flex; justify-content: flex-end;">
-            <div class="overlay-card right">
-                <button class="close-card" onclick="closeCard(this)">✕</button>
-                <h3>The Culinary Stage</h3>
-                <p>A gourmet center island ready for your private chef or Sunday morning pancakes. Stainless steel appliances, custom cabinetry, and a layout that turns cooking into a performance.</p>
+        <!-- 2. INTRO -->
+        <section id="page-2" class="narrative" style="z-index: 19;">
+            <div class="narrative-box">
+                <h2>Luxury is a Feeling</h2>
+                <p>Set behind the gates of the Stonegate community. 2 acres of silence. No HOA. Just you, the view, and the space to breathe.</p>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- NOOK (NEW) -->
-    <section class="section-nook">
-        <div class="interactive-bg img-nook"></div>
-        <div class="trigger-btn hidden" onclick="toggleCard(this)"></div>
-        <div class="card-container">
-            <div class="overlay-card">
-                <button class="close-card" onclick="closeCard(this)">✕</button>
-                <h3>Morning Rituals</h3>
-                <p>Framed by panoramic views and bathed in natural light, this breakfast nook is your front-row seat to the sunrise. A serene, sun-drenched corner designed for slow mornings and fresh starts.</p>
+        <!-- 3. LIVING -->
+        <section class="section-living" id="page-3" style="z-index: 18;">
+            <div class="interactive-bg img-living"></div>
+            <div class="trigger-btn" onclick="toggleCard(this)"></div>
+            <div class="card-container">
+                <div class="overlay-card">
+                    <button class="close-card" onclick="closeCard(this)">✕</button>
+                    <h3>Designed for Connection</h3>
+                    <p>Whether you’re hosting the team or enjoying a quiet evening, the open floor plan bridges effortless elegance with everyday comfort.</p>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- OFFICE -->
-    <section class="section-office">
-        <div class="interactive-bg img-office"></div>
-        <div class="trigger-btn hidden" onclick="toggleCard(this)"></div>
-        <div class="card-container" style="width: 100%; display:flex; justify-content: flex-end;">
-            <div class="overlay-card right">
-                <button class="close-card" onclick="closeCard(this)">✕</button>
-                <h3>Uninterrupted Focus</h3>
-                <p>In a world of noise, your workspace matters. A dedicated office with views that inspire, offering the privacy you need to build your legacy.</p>
+        <!-- 4. KITCHEN -->
+        <section class="section-kitchen" id="page-4" style="z-index: 17;">
+            <div class="interactive-bg img-kitchen"></div>
+            <div class="trigger-btn" onclick="toggleCard(this)"></div>
+            <div class="card-container" style="width: 100%; display:flex; justify-content: flex-end;">
+                <div class="overlay-card right">
+                    <button class="close-card" onclick="closeCard(this)">✕</button>
+                    <h3>The Culinary Stage</h3>
+                    <p>A gourmet center island ready for your private chef or Sunday morning pancakes. Stainless steel appliances and custom cabinetry.</p>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- MASTER -->
-    <section class="section-master">
-        <div class="interactive-bg img-master"></div>
-        <div class="trigger-btn hidden" onclick="toggleCard(this)"></div>
-        <div class="card-container">
-            <div class="overlay-card">
-                <button class="close-card" onclick="closeCard(this)">✕</button>
-                <h3>The Recharge</h3>
-                <p>Performance requires recovery. Your primary suite is a retreat within a retreat. Mountains by day, city lights by night. This is where the day starts and ends.</p>
+        <!-- 5. NOOK -->
+        <section class="section-nook" id="page-5" style="z-index: 16;">
+            <div class="interactive-bg img-nook"></div>
+            <div class="trigger-btn" onclick="toggleCard(this)"></div>
+            <div class="card-container">
+                <div class="overlay-card">
+                    <button class="close-card" onclick="closeCard(this)">✕</button>
+                    <h3>Morning Rituals</h3>
+                    <p>Framed by panoramic views and bathed in natural light, this breakfast nook is your front-row seat to the sunrise.</p>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- BALCONY -->
-    <section class="section-balcony">
-        <div class="interactive-bg img-balcony"></div>
-        <div class="trigger-btn hidden" onclick="toggleCard(this)"></div>
-        <div class="card-container" style="width: 100%; display:flex; justify-content: flex-end;">
-            <div class="overlay-card right">
-                <button class="close-card" onclick="closeCard(this)">✕</button>
-                <h3>Perspective</h3>
-                <p>Jetliner view of the city. From the San Gabriel to the Santa Monica Mountains. The world moves fast below, but up here? It stands still.</p>
+        <!-- 6. OFFICE -->
+        <section class="section-office" id="page-6" style="z-index: 15;">
+            <div class="interactive-bg img-office"></div>
+            <div class="trigger-btn" onclick="toggleCard(this)"></div>
+            <div class="card-container" style="width: 100%; display:flex; justify-content: flex-end;">
+                <div class="overlay-card right">
+                    <button class="close-card" onclick="closeCard(this)">✕</button>
+                    <h3>Uninterrupted Focus</h3>
+                    <p>In a world of noise, your workspace matters. A dedicated office with views that inspire.</p>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- POOL -->
-    <section class="section-pool">
-        <div class="interactive-bg img-pool"></div>
-        <div class="trigger-btn hidden" onclick="toggleCard(this)"></div>
-        <div class="card-container">
-            <div class="overlay-card">
-                <button class="close-card" onclick="closeCard(this)">✕</button>
-                <h3>Your Private Resort</h3>
-                <p>Why book a vacation when you live in one? A custom pool, mesmerizing waterfalls, and a spa that rivals 5-star hotels.</p>
+        <!-- 7. MASTER -->
+        <section class="section-master" id="page-7" style="z-index: 14;">
+            <div class="interactive-bg img-master"></div>
+            <div class="trigger-btn" onclick="toggleCard(this)"></div>
+            <div class="card-container">
+                <div class="overlay-card">
+                    <button class="close-card" onclick="closeCard(this)">✕</button>
+                    <h3>The Recharge</h3>
+                    <p>Performance requires recovery. Your primary suite is a retreat within a retreat. Performance requires recovery. Your primary suite is a retreat within a retreat. Mountains by day, city lights by night. This is where the day starts and ends.</p>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- VIDEO TOUR SECTION -->
-    <section class="video-section section-video">
-        <div class="hero-content hidden" style="margin: 0 50px;">
-            <h3>The Full Tour</h3>
-            <p>Experience the property in motion.</p>
-        </div>
-        <div class="hidden" style="display: flex; flex-direction: column; align-items: center;">
+        <!-- 8. BALCONY -->
+        <section class="section-balcony" id="page-8" style="z-index: 13;">
+            <div class="interactive-bg img-balcony"></div>
+            <div class="trigger-btn" onclick="toggleCard(this)"></div>
+            <div class="card-container" style="width: 100%; display:flex; justify-content: flex-end;">
+                <div class="overlay-card right">
+                    <button class="close-card" onclick="closeCard(this)">✕</button>
+                    <h3>Perspective</h3>
+                    <p>Jetliner view of the city. From the San Gabriel to the Santa Monica Mountains.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. POOL -->
+        <section class="section-pool" id="page-9" style="z-index: 12;">
+            <div class="interactive-bg img-pool"></div>
+            <div class="trigger-btn" onclick="toggleCard(this)"></div>
+            <div class="card-container">
+                <div class="overlay-card">
+                    <button class="close-card" onclick="closeCard(this)">✕</button>
+                    <h3>Your Private Resort</h3>
+                    <p>Why book a vacation when you live in one? A custom pool, mesmerizing waterfalls, and a spa.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10. VIDEO -->
+        <section class="video-section section-video" id="page-10" style="z-index: 11;">
+            <div class="hero-content" style="margin: 30px;">
+                <h3>The Full Tour</h3>
+                <p>Experience the property in motion.</p>
+            </div>
             <div class="video-wrapper">
-                <iframe width="337" height="599" src="https://www.youtube.com/embed/RfhooyobqcA?autoplay=1&mute=1&loop=1&playlist=RfhooyobqcA" title="7416 Wiscasset Drive" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/RfhooyobqcA?autoplay=1&mute=1&loop=1&playlist=RfhooyobqcA" title="7416 Wiscasset Drive" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
-            <!-- Fallback Link -->
-            <div class="video-fallback">
-                Video not playing? <a href="https://www.youtube.com/shorts/RfhooyobqcA" target="_blank">Watch on YouTube</a>
-            </div>
-        </div>
-    </section>
+            <div class="video-fallback"><a href="https://www.youtube.com/shorts/RfhooyobqcA" target="_blank">Watch on YouTube</a></div>
+        </section>
 
-    <!-- DETAILS -->
-    <section class="details">
-        <div class="hidden">
-            <h2>The Details</h2>
-            <p style="font-size: 1.3rem; margin-bottom: 40px; opacity: 0.9;">7416 Wiscasset Dr, West Hills, CA 91304</p>
-            <div class="grid">
-                <div class="stat"><h3>4,205</h3><p>Sq Ft Living</p></div>
-                <div class="stat"><h3>2</h3><p>Acres Lot</p></div>
-                <div class="stat"><h3>5</h3><p>Bedrooms</p></div>
-                <div class="stat"><h3>54</h3><p>Solar Panels</p></div>
+        <!-- 11. DETAILS -->
+        <section class="details" id="page-11" style="z-index: 10;">
+            <div>
+                <h2>The Details</h2>
+                <p style="font-size: 1.3rem; margin-bottom: 40px; opacity: 0.9;">7416 Wiscasset Dr, West Hills, CA 91304</p>
+                <div class="grid">
+                    <div class="stat"><h3>4,205</h3><p>Sq Ft Living</p></div>
+                    <div class="stat"><h3>2</h3><p>Acres Lot</p></div>
+                    <div class="stat"><h3>5</h3><p>Bedrooms</p></div>
+                    <div class="stat"><h3>54</h3><p>Solar Panels</p></div>
+                </div>
+                <p style="margin-top:50px; opacity: 0.5;">*Move-in Ready | ADU Potential | 3-Car Garage</p>
             </div>
-            <p style="margin-top:50px; opacity: 0.5;">*Move-in Ready | ADU Potential | 3-Car Garage</p>
-        </div>
-    </section>
+        </section>
 
-    <footer>
-        <div class="hidden">
+        <!-- 12. FOOTER -->
+        <section id="page-12" style="background:#000; color:#fff; flex-direction: column; z-index: 9;">
             <div class="footer-logo">GLOBL RED</div>
             <h2>Make It Yours.</h2>
             <p style="margin-bottom: 40px; margin-top: 20px;">You’ve seen the photos. Now, come feel the energy.</p>
             <a href="mailto:contact@kofinartey.com" class="btn btn-gold">Schedule Private Tour</a>
-            <br><br><br>
-            <p style="font-size: 0.7rem; opacity: 0.4;">© 2026 Kofi Nartey | Globl RED. All Rights Reserved.</p>
-        </div>
-    </footer>
+            <p style="font-size: 0.7rem; opacity: 0.4; margin-top: 100px;">© 2026 Kofi Nartey | Globl RED. All Rights Reserved.</p>
+        </section>
+
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="book-controls">
+        <button class="nav-btn" id="btn-prev" onclick="prevPage()">←</button>
+        <span class="page-indicator"><span id="curr-page">1</span> / 12</span>
+        <button class="nav-btn" id="btn-next" onclick="nextPage()">→</button>
+    </div>
 
     <script>
-        // --- 1. SCROLL VISIBILITY OBSERVER ---
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.1 });
+        let currentPage = 1;
+        const totalPages = 12;
 
-        document.querySelectorAll('.hidden').forEach((el) => observer.observe(el));
+        function updateControls() {
+            document.getElementById('curr-page').textContent = currentPage;
+            document.getElementById('btn-prev').disabled = currentPage === 1;
+            document.getElementById('btn-next').disabled = currentPage === totalPages;
+        }
 
+        function nextPage() {
+            if (currentPage < totalPages) {
+                const page = document.getElementById(`page-${currentPage}`);
+                page.classList.add('turned');
+                currentPage++;
+                updateControls();
+            }
+        }
 
-        // --- 2. CARD TOGGLE LOGIC ---
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                const page = document.getElementById(`page-${currentPage}`);
+                page.classList.remove('turned');
+                updateControls();
+            }
+        }
+
+        // --- Card Toggle Logic ---
         function toggleCard(btn) {
             const section = btn.parentElement;
             const card = section.querySelector('.overlay-card');
@@ -496,22 +378,40 @@
             trigger.style.opacity = '1';
             trigger.style.pointerEvents = 'auto';
         }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "ArrowRight") nextPage();
+            if (e.key === "ArrowLeft") prevPage();
+        });
 
+        updateControls();
 
-        // --- 3. BACKGROUND IMAGE TILT LOGIC ---
+        // --- BREATHE / ZOOM INTERACTION (Fixed) ---
         const bgImages = document.querySelectorAll('.interactive-bg');
 
         document.addEventListener('mousemove', (e) => {
-            if (window.innerWidth < 768) return; // Disable on mobile
+            if (window.innerWidth < 768) return; 
 
-            const x = (e.clientX - window.innerWidth / 2) / 40; 
-            const y = (e.clientY - window.innerHeight / 2) / 40;
+            // Calculate percentage of screen (0 to 1)
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const xPct = e.clientX / width;
+            const yPct = e.clientY / height;
+
+            // Logic: 
+            // Up (y=0) -> More Zoom. Down (y=1) -> Less Zoom.
+            // Left (x=0) -> More Zoom. Right (x=1) -> Less Zoom.
+            
+            // Base zoom is 1.0. We add up to 0.2 extra zoom.
+            const zoomStrength = 0.2; 
+            const scale = 1.0 + ((1 - yPct) * zoomStrength) + ((1 - xPct) * zoomStrength);
+
+            // Clamp max zoom to avoid blur
+            const finalScale = Math.min(scale, 1.4);
 
             bgImages.forEach(bg => {
-                const rect = bg.parentElement.getBoundingClientRect();
-                if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    bg.style.transform = `scale(1.1) translateX(${-x}px) translateY(${-y}px) rotateY(${x/2}deg) rotateX(${-y/2}deg)`;
-                }
+                // Apply Scale only. The 2s CSS transition makes it "breathe".
+                bg.style.transform = `scale(${finalScale})`;
             });
         });
     </script>
